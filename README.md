@@ -1,2 +1,2 @@
 # blog-next.js
-Progetto che mostra come creare blog con Next.js in modi diversi.
+Progetto che mostra come creare un blog con Next.js in modi diversi.
