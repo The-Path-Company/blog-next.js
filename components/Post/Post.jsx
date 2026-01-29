@@ -12,8 +12,23 @@ export default function Post({ article }) {
   const description =
     data.description ?? data.excerpt ?? "Nessuna descrizione disponibile.";
 
-  const baseUrl = "http://localhost:1337";
-  const imageUrl = `${baseUrl}${article.cover.url}`;
+  const coverUrl =
+    data?.cover?.data?.attributes?.url ??
+    data?.cover?.url ??
+    data?.image?.data?.attributes?.url ??
+    null;
+
+  const devBaseUrl =
+    process.env.NODE_ENV === "development" ? "http://localhost:1337" : "";
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL ?? devBaseUrl;
+  const isAbsolute = typeof coverUrl === "string" && /^https?:\/\//.test(coverUrl);
+  const imageUrl = coverUrl
+    ? isAbsolute
+      ? coverUrl
+      : baseUrl
+        ? `${baseUrl}${coverUrl}`
+        : FALLBACK_IMAGE
+    : FALLBACK_IMAGE;
 
   return (
     <article className={styles.card}>
