@@ -1,4 +1,6 @@
 import Post from "@/components/Post/Post";
+import StrapiPlaceholder from "@/components/StrapiPlaceholder/StrapiPlaceholder";
+import StrapiPostContainer from "@/components/StrapiPostContainer/StrapiPostContainer";
 
 const devBaseUrl =
   process.env.NODE_ENV === "development" ? "http://localhost:1337" : "";
@@ -9,7 +11,7 @@ const API_BASE =
 
 async function fetchArticles() {
   if (!API_BASE) {
-    return [];
+    return { articles: [], hasError: true };
   }
 
   const endpoint = `${API_BASE.replace(/\/$/, "")}/api/articles?populate=*`;
@@ -17,27 +19,34 @@ async function fetchArticles() {
   try {
     const response = await fetch(endpoint, { cache: "no-store" });
     if (!response.ok) {
-      return [];
+      return { articles: [], hasError: true };
     }
     const data = await response.json();
-    return Array.isArray(data?.data) ? data.data : [];
+    return {
+      articles: Array.isArray(data?.data) ? data.data : [],
+      hasError: false,
+    };
   } catch (error) {
     console.error("Failed to fetch articles:", error);
-    return [];
+    return { articles: [], hasError: true };
   }
 }
 
 export default async function BlogPage() {
-  const articles = await fetchArticles();
+  const { articles, hasError } = await fetchArticles();
+
+  if (hasError) {
+    return <StrapiPlaceholder />;
+  }
 
   return (
-    <div>
+    <StrapiPostContainer>
       {articles.map((article, index) => (
         <Post
           key={article?.id ?? article?.attributes?.slug ?? index}
           article={article}
         />
       ))}
-    </div>
+    </StrapiPostContainer>
   );
 }
