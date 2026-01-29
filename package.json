@@ -1,9 +1,11 @@
 {
-  "name": "nextjs-project",
+  "name": "blog-next-strapi-test",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev -p 3000\" \"npm --prefix server run dev\"",
+    "dev:next": "next dev -p 3000",
+    "dev:strapi": "npm --prefix server run dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -14,6 +16,7 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "eslint": "^9",
     "eslint-config-next": "16.1.6"
   }
